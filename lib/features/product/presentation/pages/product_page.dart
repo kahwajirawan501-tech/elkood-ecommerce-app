@@ -52,152 +52,176 @@ class _ProductsPageState extends State<ProductsPage> {
 
     return BlocProvider(
       create: (context) => sl<ProfileCubit>()..getUserData(),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        key: _scaffoldKey,
-        drawer: const HomeDrawer(),
-        body: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: sizes.padding.screenHorizontal, vertical: sizes.spacing.extraLarge),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(onTap:() {
-                      _searchFocusNode.unfocus();
-                      _scaffoldKey.currentState?.openDrawer();
-                    }
-                        , child:
-                    Container(width:sizes.borderRadius.extraLarge, height:sizes.borderRadius.extraLarge,
-                        decoration: const BoxDecoration(color: AppColors.lightBackground, shape: BoxShape.circle),
-                        child: Icon(Icons.menu_rounded, size:sizes.icons.medium,color: AppColors.darkText))),
-                    GestureDetector(
-                      onTap: () {
-                        _searchFocusNode.unfocus();
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const CartPage()));
-                      },
-                      child: Stack(
-                        children: [
-                          Container(
-                            width: sizes.borderRadius.extraLarge,
-                            height: sizes.borderRadius.extraLarge,
-                            decoration: const BoxDecoration(
-                              color: AppColors.lightBackground,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.shopping_bag_outlined,
-                              size: sizes.icons.medium,
-                              color: AppColors.darkText,
-                            ),
-                          ),
-
-                          BlocBuilder<CartCubit, CartState>(
-                            builder: (context, state) {
-                              final cubit = context.read<CartCubit>();
-
-                              if (cubit.hasUnsavedChanges) {
-                                return Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: Container(
-                                    width: 12.r,
-                                    height: 12.r,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.red,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                );
-                              }
-                              return const SizedBox.shrink();
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+      child: BlocListener<ProductCubit, ProductState>(
+        listener: (context, state) {
+          if (state is ProductError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  state.message == "No Internet"
+                      ? "No internet connection. Please check your network."
+                      : "Something went wrong. Please try again later.",
+                  style: AppTextStyles.b1Regular().copyWith(color: Colors.white),
+                ),
+                backgroundColor: AppColors.primary,
+                behavior: SnackBarBehavior.floating,
+                margin: EdgeInsets.all(16.r),
+                action: SnackBarAction(
+                  label: "Retry",
+                  textColor: Colors.white,
+                  onPressed: () => context.read<ProductCubit>().fetchProducts(),
                 ),
               ),
-
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: sizes.padding.screenHorizontal),
-                  child: CustomScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+            );
+          }
+        },
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          key: _scaffoldKey,
+          drawer: const HomeDrawer(),
+          body: SafeArea(
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: sizes.padding.screenHorizontal, vertical: sizes.spacing.extraLarge),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(onTap:() {
+                        _searchFocusNode.unfocus();
+                        _scaffoldKey.currentState?.openDrawer();
+                      }
+                          , child:
+                      Container(width:sizes.borderRadius.extraLarge, height:sizes.borderRadius.extraLarge,
+                          decoration: const BoxDecoration(color: AppColors.lightBackground, shape: BoxShape.circle),
+                          child: Icon(Icons.menu_rounded, size:sizes.icons.medium,color: AppColors.darkText))),
+                      GestureDetector(
+                        onTap: () {
+                          _searchFocusNode.unfocus();
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const CartPage()));
+                        },
+                        child: Stack(
                           children: [
-                            BlocBuilder<ProfileCubit, ProfileState>(
+                            Container(
+                              width: sizes.borderRadius.extraLarge,
+                              height: sizes.borderRadius.extraLarge,
+                              decoration: const BoxDecoration(
+                                color: AppColors.lightBackground,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.shopping_bag_outlined,
+                                size: sizes.icons.medium,
+                                color: AppColors.darkText,
+                              ),
+                            ),
+        
+                            BlocBuilder<CartCubit, CartState>(
                               builder: (context, state) {
-                                String welcomeText = "Welcome back!";
-                                if (state is ProfileLoaded) welcomeText = state.user.name.firstname;
-                                return Text(welcomeText, style: AppTextStyles.h1());
+                                final cubit = context.read<CartCubit>();
+        
+                                if (cubit.hasUnsavedChanges) {
+                                  return Positioned(
+                                    right: 0,
+                                    top: 0,
+                                    child: Container(
+                                      width: 12.r,
+                                      height: 12.r,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return const SizedBox.shrink();
                               },
                             ),
-                            SizedBox(height: sizes.spacing.small),
-                            Text("Find your unique style today!", style: AppTextStyles.p5Regular(color: AppColors.greyText)),
-                            SizedBox(height: sizes.spacing.large),
                           ],
                         ),
-                      ),
-
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: EdgeInsets.only(bottom: sizes.padding.screenVertical),
-                          child: Row(
-                            children: [
-                              Expanded(child: SizedBox(height: 50, child: AppSearchField(
-                                  controller: _searchController,
-                                  focusNode: _searchFocusNode,
-                                  hint: "Search...",
-                                  onChanged: (value) => context.read<ProductCubit>().updateSearchQuery(value)))),
-                              SizedBox(width: sizes.spacing.small),
-                              GestureDetector(
-                                onTap: () {
-                                  _searchFocusNode.unfocus();
-                                  showModalBottomSheet(context: context,
-                                      isScrollControlled: true, backgroundColor: Colors.transparent,
-                                      builder: (_) => BlocProvider.value(value: context.read<ProductCubit>(),
-                                          child: const ProductFilterBottomSheet()));
-                                }
-                                    ,
-                                child: Container(width: sizes.buttons.height-6, height: sizes.buttons.height-6, decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(sizes.borderRadius.large)), child: const Icon(Icons.tune_rounded, color: Colors.white)),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      SliverToBoxAdapter(child: Padding(padding: EdgeInsets.only(bottom: sizes.padding.screenVertical), child: Text("What's Hot Now", style: AppTextStyles.p4Medium(color: AppColors.darkText).copyWith(fontWeight: FontWeight.w700)))),
-
-                      BlocBuilder<ProductCubit, ProductState>(
-                        builder: (context, state) {
-                          if (state is ProductLoading) return const SliverFillRemaining(child: Center(child: AppLoader()));
-                          if (state is ProductLoaded) {
-                            return SliverGrid(
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: isLandscape ? 4 : 2, mainAxisSpacing: 16.h, crossAxisSpacing: 16.w, childAspectRatio: 0.65),
-                              delegate: SliverChildBuilderDelegate((context, index) =>
-                                  ProductCard(product: state.products[index],
-                                      onTap: () {
-                                        _searchFocusNode.unfocus();
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                                            ProductDetailsPage(product: state.products[index])));
-                                      },
-                                          ), childCount: state.products.length),
-                            );
-                          }
-                          return const SliverToBoxAdapter(child: SizedBox());
-                        },
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
+        
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: sizes.padding.screenHorizontal),
+                    child: CustomScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              BlocBuilder<ProfileCubit, ProfileState>(
+                                builder: (context, state) {
+                                  String welcomeText = "Welcome back!";
+                                  if (state is ProfileLoaded) welcomeText = state.user.name.firstname;
+                                  return Text(welcomeText, style: AppTextStyles.h1());
+                                },
+                              ),
+                              SizedBox(height: sizes.spacing.small),
+                              Text("Find your unique style today!", style: AppTextStyles.p5Regular(color: AppColors.greyText)),
+                              SizedBox(height: sizes.spacing.large),
+                            ],
+                          ),
+                        ),
+        
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom: sizes.padding.screenVertical),
+                            child: Row(
+                              children: [
+                                Expanded(child: SizedBox(height: 50, child: AppSearchField(
+                                    controller: _searchController,
+                                    focusNode: _searchFocusNode,
+                                    hint: "Search...",
+                                    onChanged: (value) => context.read<ProductCubit>().updateSearchQuery(value)))),
+                                SizedBox(width: sizes.spacing.small),
+                                GestureDetector(
+                                  onTap: () {
+                                    _searchFocusNode.unfocus();
+                                    showModalBottomSheet(context: context,
+                                        isScrollControlled: true, backgroundColor: Colors.transparent,
+                                        builder: (_) => BlocProvider.value(value: context.read<ProductCubit>(),
+                                            child: const ProductFilterBottomSheet()));
+                                  }
+                                      ,
+                                  child: Container(width: sizes.buttons.height-6, height: sizes.buttons.height-6, decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(sizes.borderRadius.large)), child: const Icon(Icons.tune_rounded, color: Colors.white)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+        
+                        SliverToBoxAdapter(child: Padding(padding: EdgeInsets.only(bottom: sizes.padding.screenVertical), child: Text("What's Hot Now", style: AppTextStyles.p4Medium(color: AppColors.darkText).copyWith(fontWeight: FontWeight.w700)))),
+        
+                        BlocBuilder<ProductCubit, ProductState>(
+                          builder: (context, state) {
+                            if (state is ProductLoading) return const SliverFillRemaining(child: Center(child: AppLoader()));
+                            if (state is ProductLoaded) {
+                              return SliverGrid(
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: isLandscape ? 4 : 2, mainAxisSpacing: 16.h, crossAxisSpacing: 16.w, childAspectRatio: 0.65),
+                                delegate: SliverChildBuilderDelegate((context, index) =>
+                                    ProductCard(product: state.products[index],
+                                        onTap: () {
+                                          _searchFocusNode.unfocus();
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                              ProductDetailsPage(product: state.products[index])));
+                                        },
+                                            ), childCount: state.products.length),
+                              );
+                            }
+                            return const SliverToBoxAdapter(child: SizedBox());
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:e_commerce/features/product/domain/usecase/get_products_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/product_entity.dart';
@@ -15,6 +16,12 @@ class ProductCubit extends Cubit<ProductState> {
   ProductCubit(this.getProductsUseCase) : super(ProductInitial());
 
   Future<void> fetchProducts() async {
+    final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
+
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      emit(ProductError("No Internet"));
+      return;
+    }
     emit(ProductLoading());
     try {
       _allProducts = await getProductsUseCase.call();
@@ -69,5 +76,17 @@ class ProductCubit extends Cubit<ProductState> {
     }).toList();
 
     emit(ProductLoaded(filteredList));
+  }
+
+  Future<void> checkConnectionAndFetch() async {
+    final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
+
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      emit(ProductError("No Internet"));
+      return;
+
+    } else {
+      fetchProducts();
+    }
   }
 }

@@ -17,3 +17,6 @@ class ProductError extends ProductState {
 
   ProductError(this.message);
 }
+class NetworkErrorState extends ProductError {
+
+  NetworkErrorState(String message) : super(message);}
