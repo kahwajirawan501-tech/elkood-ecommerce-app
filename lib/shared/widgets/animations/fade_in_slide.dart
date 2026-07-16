@@ -1,31 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class FadeInSlide extends StatelessWidget {
+class FadeInSlide extends StatefulWidget {
   final Widget child;
-  final int delay; // بالملي ثانية
+  final int delay;
 
   const FadeInSlide({super.key, required this.child, required this.delay});
 
   @override
+  State<FadeInSlide> createState() => _FadeInSlideState();
+}
+
+class _FadeInSlideState extends State<FadeInSlide> {
+  bool _isVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration(milliseconds: widget.delay), () {
+      if (mounted) {
+        setState(() {
+          _isVisible = true;
+        });
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return TweenAnimationBuilder(
-      tween: Tween<double>(begin: 0, end: 1),
+    return AnimatedOpacity(
+      opacity: _isVisible ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 600),
       curve: Curves.easeOutCubic,
-      // تأخير الأنيميشن
-      builder: (context, double value, child) {
-        return Opacity(
-          opacity: value,
-          child: Transform.translate(
-            offset: Offset(0, (1 - value) * 30.h), // حركة من الأسفل للأعلى
-            child: child,
-          ),
-        );
-      },
-      // إضافة التأخير هنا عبر الـ duration في الـ animation إذا أردتِ
-      // أو ببساطة استخدمي Widget أخرى إذا أردتِ تأخيراً دقيقاً
-      child: child,
+      child: AnimatedSlide(
+        offset: _isVisible ? Offset.zero : const Offset(0, 0.1),
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeOutCubic,
+        child: widget.child,
+      ),
     );
   }
 }

@@ -75,14 +75,8 @@ class _LoginPageState extends State<LoginPage> {
 
                       children: [
                         SizedBox(height: sizes.spacing.extraLarge),
-                        FadeInSlide(
-                          delay: 0,
-                          child: InkWell(
-                              onTap: () => Navigator.pop(context),
-                              borderRadius: BorderRadius.circular(sizes.icons.medium),
-                              child:AppBackButton()
-                          ),
-                        ),
+                        SizedBox(height: sizes.spacing.extraLarge),
+                        SizedBox(height: sizes.spacing.extraLarge),
 
                         SizedBox(height: 0.1.sh),
                         FadeInSlide(
