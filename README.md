@@ -23,3 +23,16 @@ A professional E-commerce application developed as a technical task for **EL KOO
 
 1. Clone the repository:
   git clone [https://github.com/kahwajirawan501-tech/elkood-ecommerce-app.git](https://github.com/kahwajirawan501-tech/elkood-ecommerce-app.git)
+## Application Screenshots
+
+| Login | Home Page | Product Detail |
+| :---: | :---: | :---: |
+| ![Login](screenshots_task/login.jpg) | ![Home](screenshots_task/home_page.jpg) | ![Detail](screenshots_task/detail.jpg) |
+
+| Filter | Profile | Saved Items |
+| :---: | :---: | :---: |
+| ![Filter](screenshots_task/filter.jpg) | ![Profile](screenshots_task/profile.jpg) | ![Save](screenshots_task/save.jpg) |
+
+| Un Saved Item |
+| :---: |
+| ![Save](screenshots_task/unsave.jpg) |
