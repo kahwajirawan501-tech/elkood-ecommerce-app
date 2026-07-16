@@ -74,11 +74,9 @@ class _LoginPageState extends State<LoginPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
 
                       children: [
-                        SizedBox(height: sizes.spacing.extraLarge),
-                        SizedBox(height: sizes.spacing.extraLarge),
-                        SizedBox(height: sizes.spacing.extraLarge),
 
-                        SizedBox(height: 0.1.sh),
+
+                        SizedBox(height: 0.2.sh),
                         FadeInSlide(
                           delay: 100,
                           child: Text(
@@ -119,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         SizedBox(height: sizes.spacing.extraLarge),
                         FadeInSlide(
-                          delay: 600,
+                          delay: 500,
                           child: BlocBuilder<LoginCubit, LoginState>(
                             builder: (context, state) {
                               return AppButton(
@@ -140,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         SizedBox(height: sizes.spacing.extraLarge),
                         FadeInSlide(
-                          delay: 700,
+                          delay: 600,
 
                           child:Row(
                             mainAxisAlignment: MainAxisAlignment.center,

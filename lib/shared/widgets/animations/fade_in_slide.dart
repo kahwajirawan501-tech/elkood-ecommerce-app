@@ -17,12 +17,15 @@ class _FadeInSlideState extends State<FadeInSlide> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(milliseconds: widget.delay), () {
-      if (mounted) {
-        setState(() {
-          _isVisible = true;
-        });
-      }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(Duration(milliseconds: widget.delay), () {
+        if (mounted) {
+          setState(() {
+            _isVisible = true;
+          });
+        }
+      });
     });
   }
 
